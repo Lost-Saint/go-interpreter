@@ -78,7 +78,7 @@ func (l *Lexer) NextToken() token.Token {
         } else {
             tok = newToken(token.ILLEGAL, l.ch)
         }
-}
+    }
 
     l.readChar()
     return tok
