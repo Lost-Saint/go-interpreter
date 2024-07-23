@@ -92,6 +92,20 @@ func (rs *ReturnStatement) String() string {
 	return out.String()
 }
 
+type ExpressionStatement struct {
+	Token      token.Token // the first token of the expression
+	Expression Expression
+}
+
+func (es *ExpressionStatement) statementNode()       {}
+func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
+func (es *ExpressionStatement) String() string {
+	if es.Expression != nil {
+		return es.Expression.String()
+	}
+	return ""
+}
+
 type BlockStatement struct {
 	Token      token.Token // the { token
 	Statements []Statement
@@ -101,9 +115,11 @@ func (bs *BlockStatement) statementNode()       {}
 func (bs *BlockStatement) TokenLiteral() string { return bs.Token.Literal }
 func (bs *BlockStatement) String() string {
 	var out bytes.Buffer
+
 	for _, s := range bs.Statements {
 		out.WriteString(s.String())
 	}
+
 	return out.String()
 }
 
@@ -176,7 +192,7 @@ func (ie *InfixExpression) String() string {
 }
 
 type IfExpression struct {
-	Token       token.Token
+	Token       token.Token // The 'if' token
 	Condition   Expression
 	Consequence *BlockStatement
 	Alternative *BlockStatement
@@ -186,30 +202,18 @@ func (ie *IfExpression) expressionNode()      {}
 func (ie *IfExpression) TokenLiteral() string { return ie.Token.Literal }
 func (ie *IfExpression) String() string {
 	var out bytes.Buffer
+
 	out.WriteString("if")
 	out.WriteString(ie.Condition.String())
 	out.WriteString(" ")
 	out.WriteString(ie.Consequence.String())
+
 	if ie.Alternative != nil {
 		out.WriteString("else ")
 		out.WriteString(ie.Alternative.String())
 	}
 
 	return out.String()
-}
-
-type ExpressionStatement struct {
-	Token      token.Token // the first token of the expression
-	Expression Expression
-}
-
-func (es *ExpressionStatement) statementNode()       {}
-func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
-func (es *ExpressionStatement) String() string {
-	if es.Expression != nil {
-		return es.Expression.String()
-	}
-	return ""
 }
 
 type FunctionLiteral struct {
@@ -222,15 +226,18 @@ func (fl *FunctionLiteral) expressionNode()      {}
 func (fl *FunctionLiteral) TokenLiteral() string { return fl.Token.Literal }
 func (fl *FunctionLiteral) String() string {
 	var out bytes.Buffer
+
 	params := []string{}
 	for _, p := range fl.Parameters {
 		params = append(params, p.String())
 	}
+
 	out.WriteString(fl.TokenLiteral())
 	out.WriteString("(")
 	out.WriteString(strings.Join(params, ", "))
 	out.WriteString(") ")
 	out.WriteString(fl.Body.String())
+
 	return out.String()
 }
 
